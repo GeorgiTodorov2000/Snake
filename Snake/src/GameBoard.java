@@ -10,6 +10,7 @@ public class GameBoard extends JFrame implements MouseListener {
     public static final int TILE_Y_COUNT = 9;
     private Object[][] pieceCollection;
     private Object selectedPiece;
+    private Object clickedTile;
     private Object lostTile;
     private Random RANDOM = new Random();
     public int SCORE = 0;
@@ -21,6 +22,7 @@ public class GameBoard extends JFrame implements MouseListener {
     private int E = CURRENT_ROW++;
     private int S = CURRENT_COL++;
     private int W = CURRENT_ROW--;
+    private int POINTS = 0;
 
     public GameBoard() {
         this.pieceCollection = new Object[TILE_X_COUNT][TILE_Y_COUNT];
@@ -160,34 +162,69 @@ public class GameBoard extends JFrame implements MouseListener {
 
     }
 
+    private void win() {
+        if (POINTS >= 300) {
+            System.out.println("You won");
+            System.exit(1);
+        }
+    }
+
 
     public void mouseClicked(MouseEvent e) {
         int row = this.getBoardDimensionBasedOnCoordinates(e.getY());
         int col = this.getBoardDimensionBasedOnCoordinates(e.getX());
-
+        System.out.println(row + "" + col);
         if (this.selectedPiece != null) {
-            
+
+
             Snake snake = (Snake) this.selectedPiece;
             if(isMoveValid(row,col)) {
-                switch (snake.getId()) {
-                    case 0: System.out.println("Broken"); break;
-                    case 1: System.out.println("You ate yourself"); break;
-                    case 2: System.out.println("10 pts"); break;
-                    case 3: System.out.println("15 pts"); break;
+                if (this.hasBoardPiece(row, col)) {
+                    this.clickedTile = this.getBoardPiece(row, col);
                 }
+                Snake nextTile = (Snake) this.clickedTile;
+                if (this.clickedTile != null) {
+                    switch (nextTile.getId()) {
+                        case 0 -> {
+                            System.out.println("That was an obstacle, you died");
+                            System.exit(1);
+                        }
+                        case 1 -> {
+                            System.out.println("You ate yourself");
+                            System.exit(1);
 
-                snake.move(row, col);
-                clickedSquare(row,col);
+                        }
+                        case 2 -> {
+                            System.out.println("10 pts");
+                            POINTS += 10;
+                            win();
+                            snake.move(row, col);
+                            clickedSquare(row, col);
 
+                        }
+                        case 3 -> {
+                            System.out.println("15 pts");
+                            POINTS += 15;
+                            win();
+                            snake.move(row, col);
+                            clickedSquare(row, col);
 
-                this.selectedPiece = null;
-
+                        }
+                    }
+                } else {
+                    snake.move(row, col);
+                    clickedSquare(row, col);
+                }
             }
+//            else {
+//                snake = (Snake) this.selectedPiece
+                this.clickedTile = null;
+                this.selectedPiece = null;
+//            }
         }
 
         if (this.hasBoardPiece(row, col)) {
             this.selectedPiece = this.getBoardPiece(row, col);
-
         }
         this.repaint();
     }

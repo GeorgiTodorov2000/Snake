@@ -23,6 +23,7 @@ public class GameBoard extends JFrame implements MouseListener {
     private int S = CURRENT_COL++;
     private int W = CURRENT_ROW--;
     private int POINTS = 0;
+    private int TAIL_SIZE = 0;
 
     public GameBoard() {
         this.pieceCollection = new Object[TILE_X_COUNT][TILE_Y_COUNT];
@@ -104,7 +105,7 @@ public class GameBoard extends JFrame implements MouseListener {
         if (STARTING_ROW != 1 && STARTING_COL != 1) this.pieceCollection[1][1] = new Snake(1, 1, 2, Color.yellow);
         if (STARTING_ROW != 3 && STARTING_COL != 5) this.pieceCollection[3][5] = new Snake(3, 5, 2, Color.yellow);
         if (STARTING_ROW != 5 && STARTING_COL != 7) this.pieceCollection[5][7] = new Snake(5, 7, 2, Color.yellow);
-        if (STARTING_ROW != 7 && STARTING_COL != 4) this.pieceCollection[7][4] = new Snake(6, 4, 2, Color.yellow);
+        if (STARTING_ROW != 7 && STARTING_COL != 4) this.pieceCollection[7][4] = new Snake(7, 4, 2, Color.yellow);
         if (STARTING_ROW != 2 && STARTING_COL != 6) this.pieceCollection[2][6] = new Snake(2, 6, 2, Color.yellow);
 
         for(int row = 1; row < 8; ++row) {
@@ -142,7 +143,7 @@ public class GameBoard extends JFrame implements MouseListener {
 
     private void clickedSquare(int row, int col) {
         this.pieceCollection[row][col] = new Snake(row, col, 1, Color.green);
-        this.pieceCollection[CURRENT_ROW][CURRENT_COL] = new Snake(CURRENT_ROW, CURRENT_COL, 1, Color.green);
+        this.pieceCollection[CURRENT_ROW][CURRENT_COL] = new Snake(CURRENT_ROW, CURRENT_COL, 4, Color.green);
         CURRENT_ROW = row;
         CURRENT_COL = col;
     }
@@ -170,6 +171,16 @@ public class GameBoard extends JFrame implements MouseListener {
         }
     }
 
+//    private void moveTail(int row, int col) {
+//        int tailRow = row - CURRENT_ROW;
+//        int tailCol = col - CURRENT_COL;
+//        for (int i = 0; i == TAIL_SIZE; i++) {
+//            this.pieceCollection[CURRENT_ROW][++tailRow] = new Snake(row,col,4,Color.green);
+//        }
+//    }
+
+
+
 
     public void mouseClicked(MouseEvent e) {
         int row = this.getBoardDimensionBasedOnCoordinates(e.getY());
@@ -191,7 +202,7 @@ public class GameBoard extends JFrame implements MouseListener {
                             System.out.println("Game Over");
                             System.exit(1);
                         }
-                        case 1 -> {
+                        case 1,4 -> {
                             System.out.println("You ate yourself");
                             System.out.println("Game Over");
                             System.exit(1);
@@ -201,7 +212,7 @@ public class GameBoard extends JFrame implements MouseListener {
                             System.out.println("10 pts");
                             POINTS += 10;
                             win();
-
+                            TAIL_SIZE++;
                             snake.move(row, col);
                             clickedSquare(row, col);
 
@@ -210,18 +221,31 @@ public class GameBoard extends JFrame implements MouseListener {
                             System.out.println("15 pts");
                             POINTS += 15;
                             win();
-                            int tailRow = CURRENT_ROW;
-                            int tailCol = CURRENT_COL;
-                            snake.move(tailRow, tailCol);
+                            TAIL_SIZE++;
                             snake.move(row, col);
                             clickedSquare(row, col);
 
+
                         }
+
                     }
                 } else {
-                    this.pieceCollection[snake.getRow()][snake.getCol()] = null;
+//                    int tailRow = row - CURRENT_ROW;
+//                    int tailCol = col - CURRENT_COL;
+//                    if (tailRow == 1 && tailCol == 0) {
+//                        this.pieceCollection[++CURRENT_ROW][CURRENT_COL] = new Snake(++CURRENT_ROW, CURRENT_COL, 4, Color.green);
+//                    } else if (tailRow == -1 && tailCol == 0) {
+//                        this.pieceCollection[--CURRENT_ROW][CURRENT_COL] = new Snake(--CURRENT_ROW, CURRENT_COL, 4, Color.green);
+//                    } else if (tailRow == 0 && tailCol == 1) {
+//                        this.pieceCollection[CURRENT_ROW][++CURRENT_COL] = new Snake(CURRENT_ROW, ++CURRENT_COL, 4, Color.green);
+//                    } else if (tailRow == 0 && tailCol == -1) {
+//                        this.pieceCollection[CURRENT_ROW][--CURRENT_COL] = new Snake(CURRENT_ROW, --CURRENT_COL, 4, Color.green);
+//                    }
 
+                    this.pieceCollection[snake.getRow()][snake.getCol()] = null;
+//                    moveTail(row,col);
                     snake.move(row, col);
+//                    clickedSquare(row, col);
                     this.pieceCollection[row][col] = new Snake(row, col, 1, Color.green);
                     CURRENT_ROW = row;
                     CURRENT_COL = col;

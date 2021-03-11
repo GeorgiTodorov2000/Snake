@@ -164,7 +164,8 @@ public class GameBoard extends JFrame implements MouseListener {
 
     private void win() {
         if (POINTS >= 300) {
-            System.out.println("You won");
+            System.out.println("You won with score: " + POINTS);
+
             System.exit(1);
         }
     }
@@ -186,11 +187,13 @@ public class GameBoard extends JFrame implements MouseListener {
                 if (this.clickedTile != null) {
                     switch (nextTile.getId()) {
                         case 0 -> {
-                            System.out.println("That was an obstacle, you died");
+                            System.out.println("That was an obstacle");
+                            System.out.println("Game Over");
                             System.exit(1);
                         }
                         case 1 -> {
                             System.out.println("You ate yourself");
+                            System.out.println("Game Over");
                             System.exit(1);
 
                         }
@@ -198,6 +201,7 @@ public class GameBoard extends JFrame implements MouseListener {
                             System.out.println("10 pts");
                             POINTS += 10;
                             win();
+
                             snake.move(row, col);
                             clickedSquare(row, col);
 
@@ -206,14 +210,22 @@ public class GameBoard extends JFrame implements MouseListener {
                             System.out.println("15 pts");
                             POINTS += 15;
                             win();
+                            int tailRow = CURRENT_ROW;
+                            int tailCol = CURRENT_COL;
+                            snake.move(tailRow, tailCol);
                             snake.move(row, col);
                             clickedSquare(row, col);
 
                         }
                     }
                 } else {
+                    this.pieceCollection[snake.getRow()][snake.getCol()] = null;
+
                     snake.move(row, col);
-                    clickedSquare(row, col);
+                    this.pieceCollection[row][col] = new Snake(row, col, 1, Color.green);
+                    CURRENT_ROW = row;
+                    CURRENT_COL = col;
+
                 }
             }
 //            else {
